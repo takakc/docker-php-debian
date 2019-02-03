@@ -1,0 +1,91 @@
+version: '2'
+services:
+  kankan-debian:
+    container_name: kankan-debian
+    build: ./debian
+    volumes_from:
+      - kankan-data
+    environment:
+      - TZ=Asia/Tokyo
+    networks:
+      kankan-net:
+        ipv4_address: 172.20.0.10
+    privileged: true
+    stdin_open: true
+    tty: true
+
+  kankan-php:
+    container_name: kankan-php
+    build: ./php
+    volumes_from:
+      - kankan-data
+    depends_on:
+      - kankan-mysql
+    networks:
+      kankan-net:
+        ipv4_address: 172.20.0.30
+    privileged: true
+    stdin_open: true
+    tty: true
+
+  kankan-nginx:
+    container_name: kankan-nginx
+    build: ./nginx
+    volumes_from:
+      - kankan-data
+    depends_on:
+      - kankan-php
+    ports: 
+      - "80:80"
+    environment:
+      - "TZ=Asia/Tokyo"
+    networks:
+      kankan-net:
+        ipv4_address: 172.20.0.90
+    privileged: true
+    stdin_open: true
+    tty: true
+
+  kankan-mysql:
+    container_name: kankan-mysql
+    build: ./mysql
+    volumes:
+      - ./mysql/setting:/etc/mysql/conf.d
+      - ./mysql/sql:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      kankan-net:
+        ipv4_address: 172.20.0.20
+    environment:
+      MYSQL_ROOT_USER: rootkan
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: test
+      MYSQL_USER: kan
+      MYSQL_PASSWORD: passpass
+      TZ: Asia/Tokyo
+    privileged: true
+    tty: true
+
+  kankan-data:
+    container_name: kankan-data
+    image: busybox
+    volumes:
+      # nginx logs
+      - ./logs/nginx:/var/log/nginx
+      # setting
+      - ./php/setting/php.ini:/usr/local/etc/php/php.ini
+      # PHP or html file
+      - ./data/www:/var/www/html
+    networks:
+      kankan-net:
+        ipv4_address: 172.20.0.40
+
+networks:
+  kankan-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
