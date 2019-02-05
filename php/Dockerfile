@@ -1,12 +1,22 @@
-FROM php:7.3.1-fpm-stretch
+FROM php:7.2.0-fpm-stretch
 MAINTAINER kan
 
 
 RUN apt-get update && apt-get install -y \
+  unzip \
   vim \
-  wget
+  wget \
+  zip \
+  zlib1g-dev
 
-RUN docker-php-ext-install pdo_mysql mysqli
+# Root User execution compoesr
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_NO_INTERACTION 1
+
+RUN docker-php-ext-install \
+  zip \
+  mysqli \
+  pdo_mysql
 
 RUN curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer
