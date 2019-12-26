@@ -8,8 +8,14 @@
 - busybox
 
 ## Usage
+### Copy .env from .env.example
+cp .env.example .env
+
+### Write project file name
+APP_CODE_PATH_HOST=../portfolio
+
 ### Execution docker-compose
 docker-compose up -d
 
-### put php file this directory
-data/www/
+### Setting application database host
+kankan-mysql or 172.20.0.20

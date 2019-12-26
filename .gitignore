@@ -1,3 +1,4 @@
 data/www/*
 logs/nginx/*
 !.gitkeep
+.env

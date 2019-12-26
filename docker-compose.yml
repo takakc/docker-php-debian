@@ -35,7 +35,7 @@ services:
       - kankan-data
     depends_on:
       - kankan-php
-    ports: 
+    ports:
       - "80:80"
     environment:
       - "TZ=Asia/Tokyo"
@@ -58,11 +58,11 @@ services:
       kankan-net:
         ipv4_address: 172.20.0.20
     environment:
-      MYSQL_ROOT_USER: rootkan
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: test
-      MYSQL_USER: kan
-      MYSQL_PASSWORD: passpass
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       TZ: Asia/Tokyo
     privileged: true
     tty: true
@@ -75,8 +75,8 @@ services:
       - ./logs/nginx:/var/log/nginx
       # setting
       - ./php/setting/php.ini:/usr/local/etc/php/php.ini
-      # PHP or html file
-      - ./data/www:/var/www/html
+      # PHP file
+      - ${APP_CODE_PATH_HOST}:/var/www
     networks:
       kankan-net:
         ipv4_address: 172.20.0.40
